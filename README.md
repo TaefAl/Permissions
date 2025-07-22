@@ -7,7 +7,8 @@ Python Implementation: Two methods for applying chmod - native os.chmod() and su
 <img width="1278" height="1035" alt="Image" src="https://github.com/user-attachments/assets/7f0a534c-d96f-4cc1-af6b-392284f0f8f8" />
 
 # Code
-import os
+
+’’’ import os
 import stat
 import subprocess
 import sys
@@ -54,10 +55,10 @@ def get_current_permissions(filepath):
         file_stat = filepath.stat()
         mode = file_stat.st_mode
         
-       
+        # Convert to octal string (remove '0o' prefix)
         octal_perms = oct(stat.S_IMODE(mode))[2:]
         
-       
+        # Convert to readable format
         readable_perms = stat.filemode(mode)[1:]  # Remove first character (file type)
         
         return octal_perms, readable_perms
@@ -96,24 +97,27 @@ def demonstrate_permissions():
     """Main demonstration function"""
     explain_permissions()
     
-  
+    # Create test file
     test_file = create_test_file()
     if not test_file:
         return
     
-
+    # Show initial permissions
     print(f"\nInitial permissions:")
     octal, readable = get_current_permissions(test_file)
     if octal and readable:
         print(f"  Octal: {octal}")
         print(f"  Readable: {readable}")
     
+    # Method 1: Using Python's os.chmod()
     if set_permissions_python(test_file, 0o775):
         octal, readable = get_current_permissions(test_file)
         print(f"  New permissions - Octal: {octal}, Readable: {readable}")
     
+    # Reset permissions for next demo
     os.chmod(test_file, 0o644)
     
+    # Method 2: Using subprocess to call system chmod
     if set_permissions_subprocess(test_file, "775"):
         octal, readable = get_current_permissions(test_file)
         print(f"  New permissions - Octal: {octal}, Readable: {readable}")
@@ -125,6 +129,7 @@ def demonstrate_permissions():
     else:
         print(f"✗ Current permissions: {final_readable}")
     
+    # Cleanup
     print(f"\nCleaning up test file...")
     try:
         test_file.unlink()
@@ -140,27 +145,30 @@ def permission_calculator():
     
     print("Enter desired permissions for each group (y/n):")
     
+    # Owner permissions
     print("\nOwner permissions:")
     owner_r = input("  Read (r)? [y/n]: ").lower().startswith('y')
     owner_w = input("  Write (w)? [y/n]: ").lower().startswith('y')
     owner_x = input("  Execute (x)? [y/n]: ").lower().startswith('y')
     
+    # Group permissions
     print("\nGroup permissions:")
     group_r = input("  Read (r)? [y/n]: ").lower().startswith('y')
     group_w = input("  Write (w)? [y/n]: ").lower().startswith('y')
     group_x = input("  Execute (x)? [y/n]: ").lower().startswith('y')
     
+    # Other permissions
     print("\nOther permissions:")
     other_r = input("  Read (r)? [y/n]: ").lower().startswith('y')
     other_w = input("  Write (w)? [y/n]: ").lower().startswith('y')
     other_x = input("  Execute (x)? [y/n]: ").lower().startswith('y')
     
-   
+    # Calculate octal values
     owner_octal = (4 if owner_r else 0) + (2 if owner_w else 0) + (1 if owner_x else 0)
     group_octal = (4 if group_r else 0) + (2 if group_w else 0) + (1 if group_x else 0)
     other_octal = (4 if other_r else 0) + (2 if other_w else 0) + (1 if other_x else 0)
     
-  
+    # Build readable format
     owner_str = ('r' if owner_r else '-') + ('w' if owner_w else '-') + ('x' if owner_x else '-')
     group_str = ('r' if group_r else '-') + ('w' if group_w else '-') + ('x' if group_x else '-')
     other_str = ('r' if other_r else '-') + ('w' if other_w else '-') + ('x' if other_x else '-')
