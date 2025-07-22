@@ -55,10 +55,10 @@ def get_current_permissions(filepath):
         file_stat = filepath.stat()
         mode = file_stat.st_mode
         
-        # Convert to octal string (remove '0o' prefix)
+       
         octal_perms = oct(stat.S_IMODE(mode))[2:]
         
-        # Convert to readable format
+    
         readable_perms = stat.filemode(mode)[1:]  # Remove first character (file type)
         
         return octal_perms, readable_perms
